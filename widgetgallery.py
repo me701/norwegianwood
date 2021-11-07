@@ -1,13 +1,12 @@
 
-#include "widgetgallery.h"
-#include "norwegianwoodstyle.h"
-
 from PyQt5.QtWidgets import QApplication, QCheckBox, QComboBox , QDateTimeEdit, QDial, QGridLayout, \
     QGroupBox, QDialog, QLabel, QLineEdit, QProgressBar, QPushButton, QRadioButton, QSlider, \
         QScrollBar, QSpinBox, QStyle, QStyleFactory, QTableWidget, \
         QTextEdit, QVBoxLayout, QHBoxLayout, QSizePolicy, QTabWidget, QWidget
 from PyQt5.QtCore import Qt, QEvent, QDateTime, QTimer
 from PyQt5.QtGui import QPalette
+
+from norwegianwoodstyle import NorwegianWoodStyle
 
 class WidgetGallery(QDialog):
 
@@ -71,12 +70,11 @@ class WidgetGallery(QDialog):
         self.styleChanged()
  
     def changeStyle(self, styleName):
-        #if (styleName == "NorwegianWood"):
-        #    QApplication.setStyle(NorwegianWoodStyle())
-        #else:
-        #    pass    
-        QApplication.setStyle(QStyleFactory.create(styleName))
-
+        if (styleName == "NorwegianWood"):
+            QApplication.setStyle(NorwegianWoodStyle())
+        else:
+            QApplication.setStyle(QStyleFactory.create(styleName))
+        
 
     def changePalette(self):
         QApplication.setPalette(
@@ -97,7 +95,6 @@ class WidgetGallery(QDialog):
 
 
     def advanceProgressBar(self):
-
         curVal = self.progressBar.value()
         maxVal = self.progressBar.maximum()
         self.progressBar.setValue(curVal + (maxVal - curVal) / 100)

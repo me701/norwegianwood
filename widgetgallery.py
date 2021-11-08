@@ -1,12 +1,14 @@
 
+#include "widgetgallery.h"
+#include "norwegianwoodstyle.h"
+
 from PyQt5.QtWidgets import QApplication, QCheckBox, QComboBox , QDateTimeEdit, QDial, QGridLayout, \
     QGroupBox, QDialog, QLabel, QLineEdit, QProgressBar, QPushButton, QRadioButton, QSlider, \
         QScrollBar, QSpinBox, QStyle, QStyleFactory, QTableWidget, \
         QTextEdit, QVBoxLayout, QHBoxLayout, QSizePolicy, QTabWidget, QWidget
-from PyQt5.QtCore import Qt, QEvent, QDateTime, QTimer
+from PyQt5.QtCore import Qt, QEvent, QDateTime, QTimer, QT_VERSION_STR
 from PyQt5.QtGui import QPalette
 
-from norwegianwoodstyle import NorwegianWoodStyle
 
 class WidgetGallery(QDialog):
 
@@ -39,7 +41,10 @@ class WidgetGallery(QDialog):
         self.createBottomRightGroupBox()
         self.createProgressBar()
 
-        self.styleComboBox.textActivated.connect(self.changeStyle)
+        if (QT_VERSION_STR == '5.15.4'):
+            self.styleComboBox.textActivated.connect(self.changeStyle)
+        else:   #support pyqt 5.12
+            self.styleComboBox.activated[str].connect(self.changeStyle)
         self.useStylePaletteCheckBox.toggled.connect(self.changePalette)
         self.disableWidgetsCheckBox.toggled.connect(self.topLeftGroupBox.setDisabled)
         self.disableWidgetsCheckBox.toggled.connect(self.topRightGroupBox.setDisabled)
@@ -70,11 +75,12 @@ class WidgetGallery(QDialog):
         self.styleChanged()
  
     def changeStyle(self, styleName):
-        if (styleName == "NorwegianWood"):
-            QApplication.setStyle(NorwegianWoodStyle())
-        else:
-            QApplication.setStyle(QStyleFactory.create(styleName))
-        
+        #if (styleName == "NorwegianWood"):
+        #    QApplication.setStyle(NorwegianWoodStyle())
+        #else:
+        #    pass    
+        QApplication.setStyle(QStyleFactory.create(styleName))
+
 
     def changePalette(self):
         QApplication.setPalette(
@@ -95,6 +101,7 @@ class WidgetGallery(QDialog):
 
 
     def advanceProgressBar(self):
+
         curVal = self.progressBar.value()
         maxVal = self.progressBar.maximum()
         self.progressBar.setValue(curVal + (maxVal - curVal) / 100)

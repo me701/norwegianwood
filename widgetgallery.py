@@ -6,8 +6,9 @@ from PyQt5.QtWidgets import QApplication, QCheckBox, QComboBox , QDateTimeEdit, 
     QGroupBox, QDialog, QLabel, QLineEdit, QProgressBar, QPushButton, QRadioButton, QSlider, \
         QScrollBar, QSpinBox, QStyle, QStyleFactory, QTableWidget, \
         QTextEdit, QVBoxLayout, QHBoxLayout, QSizePolicy, QTabWidget, QWidget
-from PyQt5.QtCore import Qt, QEvent, QDateTime, QTimer
+from PyQt5.QtCore import Qt, QEvent, QDateTime, QTimer, QT_VERSION_STR
 from PyQt5.QtGui import QPalette
+
 
 class WidgetGallery(QDialog):
 
@@ -40,6 +41,10 @@ class WidgetGallery(QDialog):
         self.createBottomRightGroupBox()
         self.createProgressBar()
 
+        if (QT_VERSION_STR == '5.15.4'):
+            self.styleComboBox.textActivated.connect(self.changeStyle)
+        else:   #support pyqt 5.12
+            self.styleComboBox.activated[str].connect(self.changeStyle)
         self.styleComboBox.activated[str].connect(self.changeStyle)
         self.useStylePaletteCheckBox.toggled.connect(self.changePalette)
         self.disableWidgetsCheckBox.toggled.connect(self.topLeftGroupBox.setDisabled)

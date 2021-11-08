@@ -45,7 +45,6 @@ class WidgetGallery(QDialog):
             self.styleComboBox.textActivated.connect(self.changeStyle)
         else:   #support pyqt 5.12
             self.styleComboBox.activated[str].connect(self.changeStyle)
-        self.styleComboBox.activated[str].connect(self.changeStyle)
         self.useStylePaletteCheckBox.toggled.connect(self.changePalette)
         self.disableWidgetsCheckBox.toggled.connect(self.topLeftGroupBox.setDisabled)
         self.disableWidgetsCheckBox.toggled.connect(self.topRightGroupBox.setDisabled)

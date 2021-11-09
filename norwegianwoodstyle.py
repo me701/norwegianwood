@@ -1,4 +1,3 @@
-
 from PyQt5.QtWidgets import (QProxyStyle, QStyleFactory, QPushButton,
                              QComboBox,QStyleOptionButton)
 from PyQt5.QtGui import (QPalette, QColor, QImage, QPainter, QBrush, 
@@ -11,7 +10,6 @@ class NorwegianWoodStyle(QProxyStyle):
         super().__init__(QStyleFactory.create("windows"))
         self.setObjectName("NorwegianWood")
         self.m_standardPalette = QPalette()
-        self.palette_set = False 
 
     def standardPalette(self):
 
@@ -50,8 +48,6 @@ class NorwegianWoodStyle(QProxyStyle):
             palette.setBrush(QPalette.Disabled, QPalette.Mid, brush)
 
             m_standardPalette = palette
-
-            self.palette_set = True
         return m_standardPalette
 
     def polish(self, widget):

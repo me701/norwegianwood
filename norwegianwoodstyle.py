@@ -1,14 +1,9 @@
-#include "norwegianwoodstyle.h"
-#include <QComboBox>
-#include <QPainter>
-#include <QPainterPath>
-#include <QPushButton>
-#include <QStyleFactory>
 
-from PyQt5.QtWidgets import QProxyStyle, QStyleFactory, QPushButton, \
-                            QComboBox,QStyleOptionButton
-from PyQt5.QtGui import QPalette, QColor, QImage, QPainter, QBrush, QPen, QPolygon, QPainterPath
-from PyQt5.QtCore import Qt, QPoint, QRect, QRectF
+from PyQt5.QtWidgets import (QProxyStyle, QStyleFactory, QPushButton,
+                             QComboBox,QStyleOptionButton)
+from PyQt5.QtGui import (QPalette, QColor, QImage, QPainter, QBrush, 
+                         QPen, QPolygon, QPainterPath, QRegion)
+from PyQt5.QtCore import Qt, QPoint, QRectF
 
 class NorwegianWoodStyle(QProxyStyle):
 
@@ -16,18 +11,18 @@ class NorwegianWoodStyle(QProxyStyle):
         super().__init__(QStyleFactory.create("windows"))
         self.setObjectName("NorwegianWood")
         self.m_standardPalette = QPalette()
+        self.palette_set = False 
 
     def standardPalette(self):
 
-        # If our palette is defined, do so?
-        if (not self.m_standardPalette.isBrushSet(QPalette.Disabled, QPalette.Mid)):
+        if not self.m_standardPalette.isBrushSet(QPalette.Disabled, QPalette.Mid):
 
             brown = QColor (212, 140, 95)
             beige = QColor(236, 182, 120)
             slightlyOpaqueBlack = QColor(0, 0, 0, 63)
 
-            backgroundImage = QImage(":/images/woodbackground.png")
-            buttonImage = QImage(":/images/woodbutton.png")
+            backgroundImage = QImage("./images/woodbackground.png")
+            buttonImage = QImage("./images/woodbutton.png")
             midImage = buttonImage.convertToFormat(QImage.Format_RGB32)
 
             painter = QPainter()
@@ -55,18 +50,21 @@ class NorwegianWoodStyle(QProxyStyle):
             palette.setBrush(QPalette.Disabled, QPalette.Mid, brush)
 
             m_standardPalette = palette
+
+            self.palette_set = True
         return m_standardPalette
 
-    #def polish(self, widget):
-    #    if (isinstance(widget, (QPushButton, QComboBox))):
-    #        widget.setAttribute(Qt.WA_Hover, True)
-    #    return widget 
+    def polish(self, widget):
+        if (isinstance(widget, (QPushButton, QComboBox))):
+            widget.setAttribute(Qt.WA_Hover, True)
+        return super().polish(widget)
+         
 
-    #def unpolish(self, widget):
-    #    if (isinstance(widget, (QPushButton, QComboBox))):
-    #        widget.setAttribute(Qt.WA_Hover, False)
-    #    return widget 
-
+    def unpolish(self, widget):
+        if (isinstance(widget, (QPushButton, QComboBox))):
+            widget.setAttribute(Qt.WA_Hover, False)
+        return super().unpolish(widget)
+         
     def pixelMetric(self, metric, option, widget):
         if metric == self.PM_ComboBoxFrameWidth:
             return 8
@@ -94,10 +92,10 @@ class NorwegianWoodStyle(QProxyStyle):
             semiTransparentBlack = QColor(0, 0, 0, 127 - delta)
 
             x, y, width, height = option.rect.getRect()
-            print("--->", x,y,width,height)
+
             roundRect = self.roundRectPath(option.rect)
 
-            radius = min(width, height) / 2
+            radius = min(width, height) // 2
 
             buttonOption = QStyleOptionButton(option)
             if (buttonOption and (buttonOption.features & QStyleOptionButton.Flat)):
@@ -138,14 +136,16 @@ class NorwegianWoodStyle(QProxyStyle):
             points = [QPoint(x1, y), QPoint(x4, y), QPoint(x3, y + radius),
                       QPoint(x2, y + height - radius), QPoint(x1, y + height)]
             topHalf = QPolygon(points)
+            topHalfReg = QRegion(topHalf)
             painter.setClipPath(roundRect)
-            painter.setClipRegion(topHalf, Qt.IntersectClip)
+            painter.setClipRegion(topHalfReg, Qt.IntersectClip)
             painter.setPen(topPen)
             painter.drawPath(roundRect)
             bottomHalf = QPolygon(points)
             bottomHalf[0] = QPoint(x4, y + height)
             painter.setClipPath(roundRect)
-            painter.setClipRegion(bottomHalf, Qt.IntersectClip)
+            bottomHalfReg = QRegion(bottomHalf)
+            painter.setClipRegion(bottomHalfReg, Qt.IntersectClip)
             painter.setPen(bottomPen)
             painter.drawPath(roundRect)
 

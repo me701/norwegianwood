@@ -1,7 +1,4 @@
 
-#include "widgetgallery.h"
-#include "norwegianwoodstyle.h"
-
 from PyQt5.QtWidgets import QApplication, QCheckBox, QComboBox , QDateTimeEdit, QDial, QGridLayout, \
     QGroupBox, QDialog, QLabel, QLineEdit, QProgressBar, QPushButton, QRadioButton, QSlider, \
         QScrollBar, QSpinBox, QStyle, QStyleFactory, QTableWidget, \
@@ -9,6 +6,7 @@ from PyQt5.QtWidgets import QApplication, QCheckBox, QComboBox , QDateTimeEdit, 
 from PyQt5.QtCore import Qt, QEvent, QDateTime, QTimer, QT_VERSION_STR
 from PyQt5.QtGui import QPalette
 
+from norwegianwoodstyle import NorwegianWoodStyle
 
 class WidgetGallery(QDialog):
 
@@ -71,25 +69,28 @@ class WidgetGallery(QDialog):
         mainLayout.setColumnStretch(1, 1)
         self.setLayout(mainLayout)
 
-        self.setWindowTitle(self.tr("Styles"))
+        self.setWindowTitle(self.tr("Styles"))        
         self.styleChanged()
  
     def changeStyle(self, styleName):
-        #if (styleName == "NorwegianWood"):
-        #    QApplication.setStyle(NorwegianWoodStyle())
-        #else:
-        #    pass    
-        QApplication.setStyle(QStyleFactory.create(styleName))
+        print("change to", styleName)
+        if (styleName == "NorwegianWood"):
+            QApplication.setStyle(NorwegianWoodStyle())
+        else:
+            QApplication.setStyle(QStyleFactory.create(styleName))
 
 
     def changePalette(self):
-        QApplication.setPalette(
-           QApplication.style().standardPalette() if self.useStylePaletteCheckBox.isChecked() else QPalette())
+        if self.useStylePaletteCheckBox.isChecked():
+            QApplication.setPalette(QApplication.style().standardPalette())
+        else:
+            QApplication.setPalette(QPalette())
 
 
     def changeEvent(self, event):
         if event.type() == QEvent.StyleChange:
             self.styleChanged()
+
 
     def styleChanged(self):
         styleName = QApplication.style().objectName()
@@ -101,15 +102,12 @@ class WidgetGallery(QDialog):
 
 
     def advanceProgressBar(self):
-
         curVal = self.progressBar.value()
         maxVal = self.progressBar.maximum()
         self.progressBar.setValue(curVal + (maxVal - curVal) / 100)
-        
 
 
     def createTopLeftGroupBox(self):
-
         self.topLeftGroupBox = QGroupBox(self.tr("Group 1"))
 
         radioButton1 = QRadioButton(self.tr("Radio button 1"))
@@ -128,7 +126,6 @@ class WidgetGallery(QDialog):
         layout.addWidget(checkBox)
         layout.addStretch(1)
         self.topLeftGroupBox.setLayout(layout)
-
 
 
     def createTopRightGroupBox(self):
@@ -220,6 +217,7 @@ class WidgetGallery(QDialog):
         layout.addWidget(dial, 3, 1, 2, 1)
         layout.setRowStretch(5, 1)
         self.bottomRightGroupBox.setLayout(layout)
+
 
     def createProgressBar(self):
         self.progressBar = QProgressBar()

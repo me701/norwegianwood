@@ -1,17 +1,15 @@
+"""
+Slightly modified version of WidgetGallery to remove 
+any dynamic changes of the style.  All the style elements
+are defined by qtmodern in the main.py file.
+"""
 
 from PyQt5.QtWidgets import QApplication, QCheckBox, QComboBox , QDateTimeEdit, QDial, QGridLayout, \
     QGroupBox, QDialog, QLabel, QLineEdit, QProgressBar, QPushButton, QRadioButton, QSlider, \
-        QScrollBar, QSpinBox, QStyleFactory, QTableWidget, \
+        QScrollBar, QSpinBox, QStyle, QStyleFactory, QTableWidget, \
         QTextEdit, QVBoxLayout, QHBoxLayout, QSizePolicy, QTabWidget, QWidget
-from PyQt5.QtCore import Qt, QEvent, QDateTime, QTimer
+from PyQt5.QtCore import Qt, QEvent, QDateTime, QTimer, QT_VERSION_STR
 from PyQt5.QtGui import QPalette
-
-import qtpy
-
-
-from norwegianwoodstyle import NorwegianWoodStyle
-from modernstyle import ModernDarkStyle
-
 
 class WidgetGallery(QDialog):
 
@@ -22,15 +20,14 @@ class WidgetGallery(QDialog):
         defaultStyleName = QApplication.style().objectName()
         styleNames = QStyleFactory.keys()
         styleNames.append("NorwegianWood")
-        styleNames.append("ModernDark")
         for i in range(1, len(styleNames)):
             if (defaultStyleName == styleNames[i]):
                 styleNames.swapItemsAt(0, i)
                 break
-  
+
         self.styleComboBox.addItems(styleNames)
 
-        styleLabel = QLabel(self.tr("&Style:")) # check this tr use
+        styleLabel = QLabel(self.tr("&Style (turned off!):")) # check this tr use
         styleLabel.setBuddy(self.styleComboBox)
 
 
@@ -44,10 +41,10 @@ class WidgetGallery(QDialog):
         self.createBottomLeftTabWidget()
         self.createBottomRightGroupBox()
         self.createProgressBar()
-        QT_VERSION = tuple(int(v) for v in qtpy.QT_VERSION.split('.')) #exports QT version to tuple (major,minor,patch)
-        if (QT_VERSION[1]>= 14):    ##text.Activated introduced in Qt 5.14... Assuming Qt5
+
+        if (QT_VERSION_STR == '5.15.4'):
             self.styleComboBox.textActivated.connect(self.changeStyle)
-        else:   #support pyqt 5.13 and earlier
+        else:   #support pyqt 5.12
             self.styleComboBox.activated[str].connect(self.changeStyle)
         self.useStylePaletteCheckBox.toggled.connect(self.changePalette)
         self.disableWidgetsCheckBox.toggled.connect(self.topLeftGroupBox.setDisabled)
@@ -74,30 +71,16 @@ class WidgetGallery(QDialog):
         mainLayout.setColumnStretch(0, 1)
         mainLayout.setColumnStretch(1, 1)
         self.setLayout(mainLayout)
-        #QApplication.setStyle(ModernDarkStyle())
-        #QApplication.setPalette(QApplication.style().standardPalette())
+
         self.setWindowTitle(self.tr("Styles"))        
         self.styleChanged()
  
     def changeStyle(self, styleName):
-        # reset the style sheet since all but modern uses the default
-        QApplication.instance().setStyleSheet("")
-        if (styleName == "NorwegianWood"):
-            QApplication.setStyle(NorwegianWoodStyle())
-        elif (styleName == "ModernDark"):
-            style = ModernDarkStyle()
-            QApplication.setStyle(style)
-            # set the style sheet as needed
-            QApplication.instance().setStyleSheet(style.stylesheet)
-        else:
-            QApplication.setStyle(QStyleFactory.create(styleName))
+        pass
 
 
     def changePalette(self):
-        if self.useStylePaletteCheckBox.isChecked():
-            QApplication.setPalette(QApplication.style().standardPalette())
-        else:
-            QApplication.setPalette(QPalette())
+        pass
 
 
     def changeEvent(self, event):

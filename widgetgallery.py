@@ -6,9 +6,9 @@ from PyQt5.QtWidgets import QApplication, QCheckBox, QComboBox , QDateTimeEdit, 
     QGroupBox, QDialog, QLabel, QLineEdit, QProgressBar, QPushButton, QRadioButton, QSlider, \
         QScrollBar, QSpinBox, QStyle, QStyleFactory, QTableWidget, \
         QTextEdit, QVBoxLayout, QHBoxLayout, QSizePolicy, QTabWidget, QWidget
-from PyQt5.QtCore import Qt, QEvent, QDateTime, QTimer, QT_VERSION_STR
+from PyQt5.QtCore import Qt, QEvent, QDateTime, QTimer
 from PyQt5.QtGui import QPalette
-
+import qtpy
 
 class WidgetGallery(QDialog):
 
@@ -40,10 +40,10 @@ class WidgetGallery(QDialog):
         self.createBottomLeftTabWidget()
         self.createBottomRightGroupBox()
         self.createProgressBar()
-
-        if (QT_VERSION_STR == '5.15.4'):
+        QT_VERSION = tuple(int(v) for v in qtpy.QT_VERSION.split('.')) #exports QT version to tuple (major,minor,patch)
+        if (QT_VERSION[1]>= 14):    ##text.Activated introduced in Qt 5.14... Assuming Qt5
             self.styleComboBox.textActivated.connect(self.changeStyle)
-        else:   #support pyqt 5.12
+        else:   #support pyqt 5.13 and earlier
             self.styleComboBox.activated[str].connect(self.changeStyle)
         self.useStylePaletteCheckBox.toggled.connect(self.changePalette)
         self.disableWidgetsCheckBox.toggled.connect(self.topLeftGroupBox.setDisabled)

@@ -1,6 +1,9 @@
 """
 This represents a reorganization of the qtmodern dark theme
-into a format similar to the NorwegianWood style.  
+into a format similar to the NorwegianWood style.  However,
+implementing the "frameless" stuff is a bit beyond what
+a simple style definition can do from the Python side
+(I think).
 """
 
 
